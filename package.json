@@ -1,0 +1,28 @@
+{
+  "name": "stitchup",
+  "version": "0.0.1",
+  "description": "Stitch CommonJS modules together when they change",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r pogo -r should spec/stitchup_spec.pogo"
+  },
+  "dependencies": {
+    "stitch": "git://github.com/featurist/stitch.git#master",
+    "optimist": "*",
+    "mocha": "~1.8.1",
+    "connect": "~2.7.2"
+  },
+  "devDependencies": {
+    "pogo": "*",
+    "should": "*",
+    "mktree": "git://github.com/featurist/mktree.git",
+    "wrench": "*"
+  },
+  "repository": "",
+  "keywords": [
+    "stitch",
+    "commonjs"
+  ],
+  "author": "Josh Chisholm",
+  "license": "BSD"
+}
