@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-var argv = require('optimist').default('t', './stitched.js').alias('t', 'target').argv;
+var argv = require('optimist').alias('t', 'target').argv;
 
 require('../src/stitchup.js').run(argv);
