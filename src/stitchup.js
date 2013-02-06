@@ -4,6 +4,20 @@
     stitch = require("stitch");
     fs = require("fs");
     connect = require("connect");
+    exports.run = function(gen1_options) {
+        var self = this;
+        var paths, target, port;
+        paths = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "paths") && gen1_options.paths !== void 0 ? gen1_options.paths : [ fs.realpathSync("./lib") ];
+        target = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "target") && gen1_options.target !== void 0 ? gen1_options.target : "js/app.js";
+        port = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "port") && gen1_options.port !== void 0 ? gen1_options.port : 3e3;
+        var package, compiler;
+        package = stitch.createPackage({
+            paths: paths
+        });
+        compiler = createCompiler(package, target);
+        connect().use(compiler.connectHandler()).use(connect.static("public")).listen(port);
+        return log("Serving http://127.0.0.1:" + port);
+    };
     createCompiler = function(package, target) {
         return {
             compile: function(res) {
@@ -27,7 +41,7 @@
                     }
                 });
             },
-            createHandler: function() {
+            connectHandler: function() {
                 var self = this;
                 var handle;
                 return handle = function(req, res, next) {
@@ -39,21 +53,6 @@
                 };
             }
         };
-    };
-    exports.run = function(gen1_options) {
-        var self = this;
-        var paths, target, port;
-        paths = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "paths") && gen1_options.paths !== void 0 ? gen1_options.paths : [ fs.realpathSync("./lib") ];
-        target = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "target") && gen1_options.target !== void 0 ? gen1_options.target : "js/app.js";
-        port = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "port") && gen1_options.port !== void 0 ? gen1_options.port : 3e3;
-        var package, compiler, handler;
-        package = stitch.createPackage({
-            paths: paths
-        });
-        compiler = createCompiler(package, target);
-        handler = compiler.createHandler();
-        connect().use(handler).use(connect.static("public")).listen(port);
-        return log("Serving http://127.0.0.1:" + port);
     };
     log = function(message) {
         var now, time;

@@ -6,8 +6,8 @@ request = require 'request'
 
 describe "stitchup"
     
-    before
-        make tree ! {
+    before @(ready)
+        make tree {
             lib = {
                 "foo.pogo" = "exports.foo = 123"
                 "bar.pogo" = "exports.bar = 456"
@@ -19,6 +19,8 @@ describe "stitchup"
                 js = {}
             }
         }
+            run and await output
+                ready()
     
     after
         wrench.rmdir sync recursive './lib'
@@ -40,21 +42,18 @@ describe "stitchup"
         request.get "http://localhost:3000#(path)" (callback)
     
     it "compiles js code for the browser" @(done)
-        run and await output      
-            request.get 'http://localhost:3000/js/app.js' @(err, res, body)
-                (body) should be stitched lib
-                done()
+        request.get 'http://localhost:3000/js/app.js' @(err, res, body)
+            (body) should be stitched lib
+            done()
 
     it "compiles js code to disk" @(done)
-        run and await output      
-            get '/js/app.js' @(err, res, body)
-                 (read file "./public/js/app.js") should be stitched lib
-                 done()        
+        get '/js/app.js' @(err, res, body)
+             (read file "./public/js/app.js") should be stitched lib
+             done()        
 
     it "hosts a static web server" @(done)
-        run and await output  
-            get '/' @(err, res, body)
-                body.should.equal "hello"
-                get '/other.html' @(err, res, body)
-                    body.should.equal "world"
-                    done()   
+        get '/' @(err, res, body)
+            body.should.equal "hello"
+            get '/other.html' @(err, res, body)
+                body.should.equal "world"
+                done()   
