@@ -6,6 +6,8 @@ request = require 'request'
 
 describe "stitchup"
     
+    stitchup = nil
+    
     before @(ready)
         make tree {
             lib = {
@@ -19,16 +21,14 @@ describe "stitchup"
                 js = {}
             }
         }
-            run and await output
+            stitchup := spawn "./bin/stitchup" []
+            stitchup.stdout.once 'data'
                 ready()
     
     after
         wrench.rmdir sync recursive './lib'
         wrench.rmdir sync recursive './public'
-
-    run and await output (callback) =
-        stitchup = spawn "./bin/stitchup" []
-        stitchup.stdout.once 'data' (callback)
+        stitchup.kill()
     
     (text) should be stitched lib =
         text.should.include 'exports.foo'
@@ -53,7 +53,10 @@ describe "stitchup"
 
     it "hosts a static web server" @(done)
         get '/' @(err, res, body)
-            body.should.equal "hello"
-            get '/other.html' @(err, res, body)
-                body.should.equal "world"
-                done()   
+            if (err)
+                done (err)
+            else
+                body.should.equal "hello"
+                get '/other.html' @(err, res, body)
+                    body.should.equal "world"
+                    done()   

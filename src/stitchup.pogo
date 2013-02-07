@@ -29,7 +29,6 @@ create compiler (package, target) = {
                 self.compile (res)
             else
                 next()
-
 }
 
 log (message) =

@@ -56,7 +56,7 @@
     };
     log = function(message) {
         var now, time;
-        now = (new Date).toString();
+        now = new Date().toString();
         time = now.match(/\d\d\:\d\d\:\d\d/)[0];
         return console.log(time + " -- " + message);
     };
