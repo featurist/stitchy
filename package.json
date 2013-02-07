@@ -1,5 +1,5 @@
 {
-  "name": "stitchup",
+  "name": "stitchy",
   "version": "0.0.1",
   "description": "Command-line wrapper for stitch",
   "main": "index.js",
@@ -19,7 +19,7 @@
     "wrench": "*",
     "request": "~2.12.0"
   },
-  "repository": "git://github.com/featurist/stitchup.git",
+  "repository": "git://github.com/featurist/stitchy.git",
   "keywords": [
     "stitch",
     "commonjs"
