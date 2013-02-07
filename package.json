@@ -1,6 +1,6 @@
 {
   "name": "stitchy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Command-line wrapper for stitch",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,6 @@
     "pogo": "*",
     "should": "*",
     "mktree": "git://github.com/featurist/mktree.git",
-    "wrench": "*",
     "request": "~2.12.0"
   },
   "repository": "git://github.com/featurist/stitchy.git",

@@ -27,7 +27,7 @@
                     fs.writeFileSync("public/" + target, source);
                     log("Compiled " + target);
                     if (err) {
-                        console.error("#{err.stack}");
+                        console.error(err.stack);
                         message = "" + err.stack;
                         res.writeHead(500, {
                             "Content-Type": "text/javascript"

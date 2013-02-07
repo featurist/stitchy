@@ -1,12 +1,12 @@
 make tree = require 'mktree'
 spawn = require 'child_process'.spawn
-wrench = require 'wrench'
 fs = require 'fs'
 request = require 'request'
 
 describe "stitchy"
     
     stitchy = nil
+    tree = nil
     
     before @(ready)
         make tree {
@@ -20,14 +20,14 @@ describe "stitchy"
                 "other.html" = "world"
                 js = {}
             }
-        }
+        } @(err, destroyable)
+            tree := destroyable
             stitchy := spawn "./bin/stitchy" []
             stitchy.stdout.once 'data'
                 ready()
     
     after
-        wrench.rmdir sync recursive './lib'
-        wrench.rmdir sync recursive './public'
+        tree.destroy!
         stitchy.kill()
     
     (text) should be stitched lib =
