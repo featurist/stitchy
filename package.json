@@ -4,7 +4,7 @@
   "description": "Command-line wrapper for stitch",
   "main": "index.js",
   "scripts": {
-    "test": "pogo -c src/stitchup.pogo && mocha spec/*_spec.pogo"
+    "test": "pogo -c src/stitchy.pogo && mocha spec/*_spec.pogo"
   },
   "dependencies": {
     "stitch": "git://github.com/featurist/stitch.git#master",
