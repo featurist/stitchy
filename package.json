@@ -19,7 +19,7 @@
     "wrench": "*",
     "request": "~2.12.0"
   },
-  "repository": "",
+  "repository": "git://github.com/featurist/stitchup.git",
   "keywords": [
     "stitch",
     "commonjs"
