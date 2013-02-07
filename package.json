@@ -1,8 +1,8 @@
 {
   "name": "stitchy",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Command-line wrapper for stitch",
-  "main": "index.js",
+  "main": "src/stitchy.js",
   "scripts": {
     "test": "pogo -c src/stitchy.pogo && mocha spec/*_spec.pogo"
   },
@@ -23,6 +23,9 @@
     "stitch",
     "commonjs"
   ],
+  "bin": {
+    "stitchy": "bin/stitchy"
+  },
   "author": "Josh Chisholm",
   "license": "BSD"
 }
