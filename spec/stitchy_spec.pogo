@@ -4,9 +4,9 @@ wrench = require 'wrench'
 fs = require 'fs'
 request = require 'request'
 
-describe "stitchup"
+describe "stitchy"
     
-    stitchup = nil
+    stitchy = nil
     
     before @(ready)
         make tree {
@@ -21,14 +21,14 @@ describe "stitchup"
                 js = {}
             }
         }
-            stitchup := spawn "./bin/stitchup" []
-            stitchup.stdout.once 'data'
+            stitchy := spawn "./bin/stitchy" []
+            stitchy.stdout.once 'data'
                 ready()
     
     after
         wrench.rmdir sync recursive './lib'
         wrench.rmdir sync recursive './public'
-        stitchup.kill()
+        stitchy.kill()
     
     (text) should be stitched lib =
         text.should.include 'exports.foo'
