@@ -1,13 +1,13 @@
 {
   "name": "stitchy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Command-line wrapper for stitch",
   "main": "src/stitchy.js",
   "scripts": {
     "test": "pogo -c src/stitchy.pogo && mocha spec/*_spec.pogo"
   },
   "dependencies": {
-    "stitch": "git://github.com/featurist/stitch.git#master",
+    "stitch": "git://github.com/featurist/stitch.git#windows",
     "optimist": "*",
     "connect": "~2.7.2"
   },
