@@ -10,6 +10,8 @@ npm install stitchy
 
 Stitchy assumes your compiled JavaScript will live somewhere under ./public
 
+Important: remember to install pogo (npm install pogo) if you want to compile PogoScript. Stitch does not complain if you don't have a pogo compiler, it will just ignore *.pogo files.
+
 #### Running the server
 
     stitchy [options]
