@@ -2,19 +2,30 @@ stitch  = require 'stitch'
 fs      = require 'fs'
 connect = require 'connect'
 
-exports.run (paths: [fs.realpath sync('./lib')], target: "js/app.js", port: 3000, logging: true) =
-    log = if (logging) @{ console log } else @{ null log }
-    package = stitch.create package { paths = paths }
-    compiler = create compiler (package, target, log)
-    server = connect().use(compiler.connect handler()).use(connect.static('public')).listen(port)
+exports.run (paths: undefined, target: undefined, logging: true, port: 3000) =
+    log = create logger (logging)
+    compiler = create compiler (paths: paths, target: target, logging: logging)
+    server = connect().use(compiler.connectify()).use(connect.static('public')).listen(port)
     log "Serving http://127.0.0.1:#(port)"
     server
 
-create compiler (package, target, log) = {
+exports.compile (options) =
+    create compiler (options).compile!
 
-    compile (res) =
-        package.compile @(err, source)
-            fs.write file sync ("public/#(target)", source)
+create compiler (paths: [fs.realpath sync('./lib')], target: "js/app.js", logging: true) =
+    log = create logger (logging)
+    package = stitch.create package { paths = paths }
+    stitchy compiler (package, target, log)
+
+stitchy compiler (package, target, log) = {
+    
+    compile! =
+        source = package.compile!
+        fs.write file! ("public/#(target)", source)
+        source
+    
+    compile and respond (res) =
+        self.compile @(err, source)
             log "Compiled #(target)"
             
             if (err)
@@ -26,13 +37,16 @@ create compiler (package, target, log) = {
                 res.write head 200 { 'Content-Type' = 'text/javascript' }
                 res.end (source)
     
-    connect handler () =
+    connectify () =
         handle (req, res, next) =
             if (req.url == "/#(target)")            
-                self.compile (res)
+                self.compile and respond (res)
             else
                 next()
 }
+
+create logger (logging) =
+    if (logging) @{ console log } else @{ null log }
 
 console log (message) =
     now = (new (Date)).to string()

@@ -38,6 +38,10 @@ describe "stitchy"
     get (path) =
         httpism.get! "http://localhost:3000#(path)".body
     
+    it "compiles js code for other programs"
+        js = stitchy.compile!
+        (js) should be stitched lib
+    
     it "compiles js code for the browser"
         body = get! '/js/app.js'
         (body) should be stitched lib
