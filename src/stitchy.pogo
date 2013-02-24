@@ -2,18 +2,21 @@ stitch  = require 'stitch'
 fs      = require 'fs'
 connect = require 'connect'
 
-exports.run (paths: [fs.realpath sync('./lib')], target: "js/app.js", port: 3000) =
+exports.run (paths: [fs.realpath sync('./lib')], target: "js/app.js", port: 3000, logging: true) =
+    log = if (logging) @{ console log } else @{ null log }
     package = stitch.create package { paths = paths }
-    compiler = create compiler (package, target)
-    connect().use(compiler.connect handler()).use(connect.static('public')).listen(port)
+    compiler = create compiler (package, target, log)
+    server = connect().use(compiler.connect handler()).use(connect.static('public')).listen(port)
     log "Serving http://127.0.0.1:#(port)"
+    server
 
-create compiler (package, target) = {
+create compiler (package, target, log) = {
 
     compile (res) =
         package.compile @(err, source)
             fs.write file sync ("public/#(target)", source)
             log "Compiled #(target)"
+            
             if (err)
                 console.error "#(err.stack)"
                 message = "" + err.stack
@@ -31,7 +34,9 @@ create compiler (package, target) = {
                 next()
 }
 
-log (message) =
+console log (message) =
     now = (new (Date)).to string()
     time = now.match(r/\d\d\:\d\d\:\d\d/).0
     console.log "#(time) -- #(message)"
+
+null log (message) = @{}
