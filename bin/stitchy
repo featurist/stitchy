@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-var argv = require('optimist').alias('t', 'target').alias('p', 'port').argv;
+var argv = require('optimist').argv;
 
 require('../src/stitchy.js').run(argv);

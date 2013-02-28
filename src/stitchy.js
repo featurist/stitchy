@@ -1,50 +1,63 @@
 (function() {
     var self = this;
-    var stitch, fs, connect, createCompiler, stitchyCompiler, createLogger, consoleLog, nullLog;
+    var stitch, fs, connect, path, createApp, createCompiler, createLogger, consoleLog, nullLog;
     stitch = require("stitch");
     fs = require("fs");
     connect = require("connect");
-    exports.run = function(gen1_options) {
-        var self = this;
-        var paths, target, logging, port;
-        paths = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "paths") && gen1_options.paths !== void 0 ? gen1_options.paths : undefined;
-        target = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "target") && gen1_options.target !== void 0 ? gen1_options.target : undefined;
-        logging = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "logging") && gen1_options.logging !== void 0 ? gen1_options.logging : true;
-        port = gen1_options !== void 0 && Object.prototype.hasOwnProperty.call(gen1_options, "port") && gen1_options.port !== void 0 ? gen1_options.port : 3e3;
-        var log, compiler, server;
-        log = createLogger(logging);
-        compiler = createCompiler({
-            paths: paths,
-            target: target,
-            logging: logging
-        });
-        server = connect().use(compiler.connectify()).use(connect.static("public")).listen(port);
-        log("Serving http://127.0.0.1:" + port);
-        return server;
-    };
+    path = require("path");
     exports.compile = function(options, continuation) {
         var self = this;
-        var gen2_arguments = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+        var gen1_arguments = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
         continuation = arguments[arguments.length - 1];
         if (!(continuation instanceof Function)) {
             throw new Error("asynchronous function called synchronously");
         }
-        options = gen2_arguments[0];
+        options = gen1_arguments[0];
         createCompiler(options).compile(continuation);
     };
-    createCompiler = function(gen3_options) {
-        var paths, target, logging;
-        paths = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "paths") && gen3_options.paths !== void 0 ? gen3_options.paths : [ fs.realpathSync("./lib") ];
-        target = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "target") && gen3_options.target !== void 0 ? gen3_options.target : "js/app.js";
-        logging = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "logging") && gen3_options.logging !== void 0 ? gen3_options.logging : true;
-        var log, package;
+    exports.run = function(gen2_options) {
+        var self = this;
+        var lib, public, port, paths, target, logging;
+        lib = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "lib") && gen2_options.lib !== void 0 ? gen2_options.lib : undefined;
+        public = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "public") && gen2_options.public !== void 0 ? gen2_options.public : "./public";
+        port = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "port") && gen2_options.port !== void 0 ? gen2_options.port : 3e3;
+        paths = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "paths") && gen2_options.paths !== void 0 ? gen2_options.paths : undefined;
+        target = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "target") && gen2_options.target !== void 0 ? gen2_options.target : undefined;
+        logging = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "logging") && gen2_options.logging !== void 0 ? gen2_options.logging : true;
+        var log, compiler, server;
         log = createLogger(logging);
+        compiler = createCompiler({
+            lib: lib,
+            "public": public,
+            paths: paths,
+            target: target,
+            logging: logging
+        });
+        server = createApp(compiler, public).listen(port);
+        log("Serving http://127.0.0.1:" + port);
+        return server;
+    };
+    createApp = function(compiler, public) {
+        return connect().use(compiler.connectify()).use(connect.static(public));
+    };
+    createCompiler = function(gen3_options) {
+        var lib, public, target, logging;
+        lib = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "lib") && gen3_options.lib !== void 0 ? gen3_options.lib : "./lib";
+        public = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "public") && gen3_options.public !== void 0 ? gen3_options.public : "./public";
+        target = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "target") && gen3_options.target !== void 0 ? gen3_options.target : "./public/js/app.js";
+        logging = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "logging") && gen3_options.logging !== void 0 ? gen3_options.logging : true;
+        var paths, log, realPublic, relativeTarget, targetUrl, package;
+        paths = [ fs.realpathSync(lib) ];
+        log = createLogger(logging);
+        realPublic = fs.realpathSync(public);
+        relativeTarget = path.relative(realPublic, target);
+        if (/^\./.test(relativeTarget)) {
+            throw new Error("target must be under public");
+        }
+        targetUrl = "/" + relativeTarget;
         package = stitch.createPackage({
             paths: paths
         });
-        return stitchyCompiler(package, target, log);
-    };
-    stitchyCompiler = function(package, target, log) {
         return {
             compile: function(continuation) {
                 var self = this;
@@ -60,7 +73,7 @@
                     } else {
                         try {
                             source = gen6_asyncResult;
-                            fs.writeFile("public/" + target, source, function(gen7_error, gen8_asyncResult) {
+                            fs.writeFile(target, source, function(gen7_error, gen8_asyncResult) {
                                 if (gen7_error) {
                                     continuation(gen7_error);
                                 } else {
@@ -80,21 +93,20 @@
             },
             compileAndRespond: function(res) {
                 var self = this;
+                var js;
+                js = function(status, body) {
+                    res.writeHead(status, {
+                        "Content-Type": "text/javascript"
+                    });
+                    return res.end(body);
+                };
                 return self.compile(function(err, source) {
-                    var message;
                     log("Compiled " + target);
                     if (err) {
                         console.error(err.stack);
-                        message = "" + err.stack;
-                        res.writeHead(500, {
-                            "Content-Type": "text/javascript"
-                        });
-                        return res.end("throw " + JSON.stringify(message));
+                        return js(500, "throw " + JSON.stringify("" + err.stack));
                     } else {
-                        res.writeHead(200, {
-                            "Content-Type": "text/javascript"
-                        });
-                        return res.end(source);
+                        return js(200, source);
                     }
                 });
             },
@@ -102,7 +114,7 @@
                 var self = this;
                 var handle;
                 return handle = function(req, res, next) {
-                    if (req.url === "/" + target) {
+                    if (req.url === targetUrl) {
                         return self.compileAndRespond(res);
                     } else {
                         return next();
