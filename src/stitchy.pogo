@@ -4,7 +4,7 @@ connect = require 'connect'
 path    = require 'path'
 
 exports.compile (options) =
-    create compiler (options).compile!
+    exports.create compiler (options).compile!
 
 exports.run (
     lib: undefined
@@ -15,21 +15,19 @@ exports.run (
     logging: true
 ) =
     log = create logger (logging)
-    compiler = create compiler (
+    compiler = exports.create compiler (
         lib: lib
         public: public
         paths: paths
         target: target
         logging: logging
     )
-    server = create app (compiler, public).listen(port)
+    app = connect().use(compiler.connectify()).use(connect.static(public))
+    server = app.listen (port)
     log "Serving http://127.0.0.1:#(port)"
     server
 
-create app (compiler, public) =
-    connect().use(compiler.connectify()).use(connect.static(public))
-
-create compiler (
+exports.create compiler (
     lib: './lib'
     public: './public'
     target: './public/js/app.js'

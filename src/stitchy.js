@@ -1,6 +1,6 @@
 (function() {
     var self = this;
-    var stitch, fs, connect, path, createApp, createCompiler, createLogger, consoleLog, nullLog;
+    var stitch, fs, connect, path, createLogger, consoleLog, nullLog;
     stitch = require("stitch");
     fs = require("fs");
     connect = require("connect");
@@ -13,7 +13,7 @@
             throw new Error("asynchronous function called synchronously");
         }
         options = gen1_arguments[0];
-        createCompiler(options).compile(continuation);
+        exports.createCompiler(options).compile(continuation);
     };
     exports.run = function(gen2_options) {
         var self = this;
@@ -24,23 +24,22 @@
         paths = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "paths") && gen2_options.paths !== void 0 ? gen2_options.paths : undefined;
         target = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "target") && gen2_options.target !== void 0 ? gen2_options.target : undefined;
         logging = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "logging") && gen2_options.logging !== void 0 ? gen2_options.logging : true;
-        var log, compiler, server;
+        var log, compiler, app, server;
         log = createLogger(logging);
-        compiler = createCompiler({
+        compiler = exports.createCompiler({
             lib: lib,
             "public": public,
             paths: paths,
             target: target,
             logging: logging
         });
-        server = createApp(compiler, public).listen(port);
+        app = connect().use(compiler.connectify()).use(connect.static(public));
+        server = app.listen(port);
         log("Serving http://127.0.0.1:" + port);
         return server;
     };
-    createApp = function(compiler, public) {
-        return connect().use(compiler.connectify()).use(connect.static(public));
-    };
-    createCompiler = function(gen3_options) {
+    exports.createCompiler = function(gen3_options) {
+        var self = this;
         var lib, public, target, logging;
         lib = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "lib") && gen3_options.lib !== void 0 ? gen3_options.lib : "./lib";
         public = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "public") && gen3_options.public !== void 0 ? gen3_options.public : "./public";
