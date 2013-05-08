@@ -19,7 +19,11 @@ describe "stitchy (with command line options)"
                 public = {
                     "index.html" = "hello"
                     "other.html" = "world"
-                    js = {}
+                    js = {
+                        jquery = {
+                            "jquery.js" = "ouch!"
+                        }
+                    }
                 }
             }
         } @(err, destroyable)
@@ -61,7 +65,6 @@ describe "stitchy (with command line options)"
         (read file "./dir/public/js/foo.js") should be stitched lib
         
     it "hosts a static web server"
-        body = get! '/'
-        body.should.equal "hello"
-        body := get! '/other.html'
-        body.should.equal "world"
+        get! '/'.should.equal "hello"
+        get! '/other.html'.should.equal "world"
+        get! '/js/jquery/jquery.js'.should.equal "ouch!"
