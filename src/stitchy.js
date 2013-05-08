@@ -24,7 +24,7 @@
         paths = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "paths") && gen2_options.paths !== void 0 ? gen2_options.paths : undefined;
         target = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "target") && gen2_options.target !== void 0 ? gen2_options.target : undefined;
         logging = gen2_options !== void 0 && Object.prototype.hasOwnProperty.call(gen2_options, "logging") && gen2_options.logging !== void 0 ? gen2_options.logging : true;
-        var log, compiler, app, server;
+        var log, compiler, realPublic, app, server;
         log = createLogger(logging);
         compiler = exports.createCompiler({
             lib: lib,
@@ -33,7 +33,8 @@
             target: target,
             logging: logging
         });
-        app = connect().use(compiler.connectify()).use(connect.static(public));
+        realPublic = fs.realpathSync(public);
+        app = connect().use(compiler.connectify()).use(connect.static(realPublic));
         server = app.listen(port);
         log("Serving http://127.0.0.1:" + port);
         return server;

@@ -22,7 +22,8 @@ exports.run (
         target: target
         logging: logging
     )
-    app = connect().use(compiler.connectify()).use(connect.static(public))
+    real public = fs.realpath sync(public)
+    app = connect().use(compiler.connectify()).use(connect.static(real public))
     server = app.listen (port)
     log "Serving http://127.0.0.1:#(port)"
     server
