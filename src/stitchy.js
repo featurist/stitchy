@@ -114,7 +114,7 @@
                 var self = this;
                 var handle;
                 return handle = function(req, res, next) {
-                    if (req.url === targetUrl) {
+                    if (req.url === targetUrl.replace(/\\/g, "/")) {
                         return self.compileAndRespond(res);
                     } else {
                         return next();

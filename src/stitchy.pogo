@@ -66,7 +66,7 @@ exports.create compiler (
     
         connectify () =
             handle (req, res, next) =
-                if (req.url == target url)            
+                if (req.url == target url.replace(r/\\/g,'/'))            
                     self.compile and respond (res)
                 else
                     next()
