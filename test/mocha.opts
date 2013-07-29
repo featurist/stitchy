@@ -1,1 +1,1 @@
--r should -r pogo
+-r ./node_modules/should -r ./node_modules/pogo
