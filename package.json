@@ -16,7 +16,8 @@
     "pogo": "*",
     "should": "*",
     "mktree": "git://github.com/featurist/mktree.git",
-    "httpism": "0.0.3"
+    "httpism": "0.0.3",
+    "jsdom": "~0.8.2"
   },
   "repository": "git://github.com/featurist/stitchy.git",
   "keywords": [

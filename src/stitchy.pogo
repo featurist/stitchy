@@ -34,7 +34,7 @@ exports.create compiler (
     target: './public/js/app.js'
     logging: true
 ) =
-    paths = [fs.realpath sync(lib)]
+    paths = lib.split(';').map @(p) @{ fs.realpath sync(p) }
     log = create logger (logging)
     real public = fs.realpath sync(public)
     relative target = path.relative(real public, target)

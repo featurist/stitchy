@@ -47,7 +47,9 @@
         target = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "target") && gen3_options.target !== void 0 ? gen3_options.target : "./public/js/app.js";
         logging = gen3_options !== void 0 && Object.prototype.hasOwnProperty.call(gen3_options, "logging") && gen3_options.logging !== void 0 ? gen3_options.logging : true;
         var paths, log, realPublic, relativeTarget, targetUrl, package;
-        paths = [ fs.realpathSync(lib) ];
+        paths = lib.split(";").map(function(p) {
+            return fs.realpathSync(p);
+        });
         log = createLogger(logging);
         realPublic = fs.realpathSync(public);
         relativeTarget = path.relative(realPublic, target);
